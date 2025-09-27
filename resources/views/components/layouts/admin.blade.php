@@ -1,19 +1,57 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">Panel de Administración</h2>
+        <div class="d-flex align-items-center">
+            <span class="badge rounded-pill bg-primary me-2">&nbsp;</span>
+            <span class="fw-semibold text-secondary">Panel de Administración</span>
+        </div>
     </x-slot>
 
-    <div class="flex">
-        <aside class="w-64 bg-gray-100 p-4 min-h-[70vh]">
-            <nav class="space-y-2 text-sm">
-                <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded hover:bg-gray-200">Dashboard</a>
-                <a href="#" class="block px-3 py-2 rounded hover:bg-gray-200">Usuarios</a>
-                <a href="#" class="block px-3 py-2 rounded hover:bg-gray-200">Cursos</a>
-                <a href="#" class="block px-3 py-2 rounded hover:bg-gray-200">Períodos</a>
-            </nav>
-        </aside>
-        <main class="flex-1 p-6">
-            {{ $slot }}
-        </main>
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-md-3 col-lg-2 bg-white border-end min-vh-100 p-0">
+                <div class="list-group list-group-flush">
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="list-group-item list-group-item-action d-flex align-items-center {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-people me-2"></i> Usuarios
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-journal-bookmark me-2"></i> Cursos
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="bi bi-calendar3 me-2"></i> Períodos
+                    </a>
+                </div>
+            </aside>
+
+            <main class="col-md-9 col-lg-10 p-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary bg-opacity-10 border-0">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-activity me-2 text-primary"></i>
+                            <span class="fw-semibold text-secondary">Resumen</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {{ $slot }}
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
+
+    @push('styles')
+    <style>
+        .list-group-item-action.active {
+            background-color: var(--bs-primary) !important;
+            border-color: var(--bs-primary) !important;
+            color: #fff !important;
+        }
+        .list-group-item-action:hover {
+            background-color: rgba(var(--bs-primary-rgb), .08);
+        }
+    </style>
+    @endpush
 </x-app-layout>

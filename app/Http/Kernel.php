@@ -6,11 +6,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
-    /**
-     * Middleware globales...
-     */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -19,9 +15,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
-    /**
-     * Grupos web/api...
-     */
     protected $middlewareGroups = [
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
@@ -37,9 +30,6 @@ class Kernel extends HttpKernel
         ],
     ];
 
-    /**
-     * 👇 Alias de middleware (Laravel 11/12)
-     */
     protected $middlewareAliases = [
         'auth'            => \App\Http\Middleware\Authenticate::class,
         'auth.basic'      => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
@@ -51,7 +41,6 @@ class Kernel extends HttpKernel
         'throttle'        => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified'        => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        // 👇 Nuestro alias
         'role'            => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }
