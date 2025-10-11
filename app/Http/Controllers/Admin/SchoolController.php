@@ -3,63 +3,54 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\School;
 use Illuminate\Http\Request;
 
 class SchoolController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $schools = School::orderBy('name')->paginate(10);
+        return view('admin.schools.index', compact('schools'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.schools.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'code' => 'required|unique:schools,code|max:10',
+            'name' => 'required|max:160',
+        ]);
+
+        School::create($request->only('code', 'name'));
+
+        return redirect()->route('admin.schools.index')->with('success', 'Escuela creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(School $school)
     {
-        //
+        return view('admin.schools.edit', compact('school'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, School $school)
     {
-        //
+        $request->validate([
+            'code' => 'required|max:10|unique:schools,code,' . $school->id,
+            'name' => 'required|max:160',
+        ]);
+
+        $school->update($request->only('code', 'name'));
+
+        return redirect()->route('admin.schools.index')->with('success', 'Escuela actualizada correctamente.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(School $school)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $school->delete();
+        return back()->with('success', 'Escuela eliminada correctamente.');
     }
 }

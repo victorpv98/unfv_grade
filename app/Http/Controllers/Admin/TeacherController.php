@@ -3,63 +3,53 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $teachers = Teacher::with('user')->paginate(10);
+        return view('admin.teachers.index', compact('teachers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.teachers.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|unique:teachers,user_id',
+            'specialty' => 'nullable|max:100',
+        ]);
+
+        Teacher::create($request->only('user_id', 'specialty'));
+
+        return redirect()->route('admin.teachers.index')->with('success', 'Docente registrado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Teacher $teacher)
     {
-        //
+        return view('admin.teachers.edit', compact('teacher'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Teacher $teacher)
     {
-        //
+        $request->validate([
+            'specialty' => 'nullable|max:100',
+        ]);
+
+        $teacher->update($request->only('specialty'));
+
+        return redirect()->route('admin.teachers.index')->with('success', 'Docente actualizado correctamente.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Teacher $teacher)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $teacher->delete();
+        return back()->with('success', 'Docente eliminado correctamente.');
     }
 }

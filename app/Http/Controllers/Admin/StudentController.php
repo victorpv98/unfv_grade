@@ -3,63 +3,55 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $students = Student::with('user')->paginate(10);
+        return view('admin.students.index', compact('students'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.students.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|unique:students,user_id',
+            'code' => 'required|unique:students,code|max:15',
+            'admission_year' => 'required|integer|min:2000',
+        ]);
+
+        Student::create($request->only('user_id', 'code', 'admission_year'));
+
+        return redirect()->route('admin.students.index')->with('success', 'Estudiante registrado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Student $student)
     {
-        //
+        return view('admin.students.edit', compact('student'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Student $student)
     {
-        //
+        $request->validate([
+            'code' => 'required|max:15|unique:students,code,' . $student->id,
+            'admission_year' => 'required|integer|min:2000',
+        ]);
+
+        $student->update($request->only('code', 'admission_year'));
+
+        return redirect()->route('admin.students.index')->with('success', 'Estudiante actualizado correctamente.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Student $student)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $student->delete();
+        return back()->with('success', 'Estudiante eliminado correctamente.');
     }
 }

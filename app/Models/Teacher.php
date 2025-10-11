@@ -3,9 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Teacher extends Model
 {
-    public function user() { return $this->belongsTo(User::class); }
-    public function courseAssignments() { return $this->hasMany(CourseTeacher::class); }
+    use HasFactory;
+
+    protected $fillable = ['user_id', 'specialty'];
+
+    // Relaciones
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function courseTeachers()
+    {
+        return $this->hasMany(CourseTeacher::class);
+    }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'course_teachers')
+                    ->withTimestamps();
+    }
 }

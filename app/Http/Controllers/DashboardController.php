@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Models\{School, Course, Teacher, Student};
 
 class DashboardController extends Controller
 {
-    /**
-     * Redirección al dashboard según rol
-     */
     public function index()
     {
         $user = Auth::user();
@@ -22,19 +19,17 @@ class DashboardController extends Controller
         };
     }
 
-    /**
-     * Dashboard de Administrador
-     */
     public function adminDashboard()
     {
         return view('dashboard.index', [
-            'title' => 'Panel de Administración',
+            'title' => 'Panel del Administrador',
+            'schoolsCount' => School::count(),
+            'teachersCount' => Teacher::count(),
+            'studentsCount' => Student::count(),
+            'coursesCount' => Course::count(),
         ]);
     }
 
-    /**
-     * Dashboard de Docente
-     */
     public function teacherDashboard()
     {
         return view('dashboard.index', [
@@ -42,9 +37,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    /**
-     * Dashboard de Estudiante
-     */
     public function studentDashboard()
     {
         return view('dashboard.index', [

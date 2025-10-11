@@ -3,63 +3,66 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\{Course, School, CourseStudent, Student};
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $courses = Course::with('school')->orderBy('name')->paginate(10);
+        return view('admin.courses.index', compact('courses'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $schools = School::all();
+        return view('admin.courses.create', compact('schools'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'code' => 'required|unique:courses,code|max:10',
+            'name' => 'required|max:150',
+            'credits' => 'required|integer|min:1',
+            'school_id' => 'required|exists:schools,id',
+        ]);
+
+        Course::create($request->only('code', 'name', 'credits', 'school_id'));
+
+        return redirect()->route('admin.courses.index')->with('success', 'Curso creado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Course $course)
     {
-        //
+        $schools = School::all();
+        return view('admin.courses.edit', compact('course', 'schools'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Course $course)
     {
-        //
+        $request->validate([
+            'code' => 'required|max:10|unique:courses,code,' . $course->id,
+            'name' => 'required|max:150',
+            'credits' => 'required|integer|min:1',
+            'school_id' => 'required|exists:schools,id',
+        ]);
+
+        $course->update($request->only('code', 'name', 'credits', 'school_id'));
+
+        return redirect()->route('admin.courses.index')->with('success', 'Curso actualizado correctamente.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Course $course)
     {
-        //
+        $course->delete();
+        return back()->with('success', 'Curso eliminado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function students(Course $course)
     {
-        //
+        $students = Student::whereHas('courseStudents', fn($q) => $q->where('course_id', $course->id))->get();
+        return view('admin.courses.students', compact('course', 'students'));
     }
 }

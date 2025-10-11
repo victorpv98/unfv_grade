@@ -5,8 +5,6 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -23,19 +21,23 @@ class User extends Authenticatable
         'status',
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function school(): BelongsTo
+    // Relaciones
+    public function school()
     {
         return $this->belongsTo(School::class);
     }
 
-    public function student(): HasOne
+    public function student()
     {
         return $this->hasOne(Student::class);
     }
 
-    public function teacher(): HasOne
+    public function teacher()
     {
         return $this->hasOne(Teacher::class);
     }
