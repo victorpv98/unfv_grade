@@ -1,8 +1,173 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+// ============================================================================
+// 🎓 Sistema de Notas FIEI – UNFV
+// Estilos principales compilados con Vite + Bootstrap 5.3
+// ============================================================================
 
-// Variables UNFV (DEBE ir ANTES de Bootstrap)
-@import 'variables';
+@use "sass:color";
+@use "./variables" as vars;
+@use "bootstrap/scss/bootstrap" with (
+  $primary: vars.$primary,
+  $secondary: vars.$secondary,
+  $success: vars.$success,
+  $info: vars.$info,
+  $warning: vars.$warning,
+  $danger: vars.$danger,
+  $light: vars.$light,
+  $dark: vars.$dark,
+  $font-family-sans-serif: vars.$font-family-sans-serif,
+  $body-bg: vars.$body-bg,
+  $body-color: vars.$body-color
+);
 
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
+// ---------------------------------------------------------------------------
+// Variables CSS globales (modo UNFV)
+:root {
+  --unfv-primary: #{vars.$primary};
+  --unfv-secondary: #{vars.$secondary};
+  --unfv-light: #{vars.$light};
+  --unfv-dark: #{vars.$dark};
+}
+
+// ---------------------------------------------------------------------------
+// Estructura base del documento
+body {
+  background-color: var(--unfv-light);
+  font-family: vars.$font-family-sans-serif;
+  color: vars.$body-color;
+}
+
+a {
+  color: color.scale(vars.$primary, $lightness: -5%);
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: color.scale(vars.$primary, $lightness: -15%);
+    text-decoration: underline;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Botones
+.btn-primary {
+  background-color: vars.$primary;
+  border-color: vars.$primary;
+
+  &:hover,
+  &:focus {
+    background-color: color.scale(vars.$primary, $lightness: -12%);
+    border-color: color.scale(vars.$primary, $lightness: -14%);
+  }
+}
+
+.btn-outline-primary {
+  color: vars.$primary;
+  border-color: vars.$primary;
+
+  &:hover,
+  &:focus {
+    background-color: rgba(vars.$primary-rgb..., 0.08);
+    color: vars.$primary;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tarjetas
+.card {
+  box-shadow: 0 10px 25px rgba(vars.$secondary-rgb..., 0.08);
+
+  &-header {
+    background-color: rgba(vars.$primary-rgb..., 0.05);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tablas
+.table thead th {
+  border-bottom: 0;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  color: rgba(vars.$secondary-rgb..., 0.75);
+}
+
+// ---------------------------------------------------------------------------
+// Insignias (badges)
+.badge.bg-primary-subtle {
+  background-color: rgba(vars.$primary-rgb..., 0.12) !important;
+  color: vars.$primary !important;
+}
+
+.badge.bg-success-subtle {
+  background-color: rgba(vars.$success-rgb..., 0.12) !important;
+  color: vars.$success !important;
+}
+
+.badge.bg-danger-subtle {
+  background-color: rgba(vars.$danger-rgb..., 0.12) !important;
+  color: vars.$danger !important;
+}
+
+.badge.bg-warning-subtle {
+  background-color: rgba(vars.$warning-rgb..., 0.18) !important;
+  color: #c47f00 !important;
+}
+
+// ---------------------------------------------------------------------------
+// Sidebar institucional
+.sidebar {
+  background-color: vars.$secondary;
+  min-width: 240px;
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 20px 40px rgba(vars.$secondary-rgb..., 0.25);
+
+  .sidebar-brand {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-link {
+    color: rgba(255, 255, 255, 0.78);
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.9rem;
+    transition: all 0.2s ease-in-out;
+
+    i {
+      width: 1.4rem;
+      text-align: center;
+    }
+
+    &:hover {
+      color: #fff;
+      background-color: color.scale(vars.$primary, $lightness: -12%);
+    }
+
+    &.active {
+      color: #fff;
+      background-color: color.scale(vars.$primary, $lightness: -6%);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Menús desplegables y alertas
+.dropdown-menu {
+  box-shadow: 0 14px 30px rgba(vars.$secondary-rgb..., 0.12);
+}
+
+.alert {
+  border: 0;
+  box-shadow: 0 10px 25px rgba(vars.$secondary-rgb..., 0.08);
+}
+
+// ---------------------------------------------------------------------------
+// Formularios
+.form-label {
+  font-weight: 600;
+  color: vars.$headings-color;
+}
+
+.form-control,
+.form-select {
+  padding: 0.65rem 0.9rem;
+}

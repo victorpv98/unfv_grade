@@ -1,118 +1,70 @@
-<div class="vh-100 bg-dark text-white d-flex flex-column"
-     style="width: 16rem; background: linear-gradient(135deg, var(--bs-dark) 0%, var(--bs-secondary) 100%) !important;">
-    
-    <!-- LOGO -->
-    <div class="p-4 d-flex align-items-center border-bottom border-secondary">
-        <img src="{{ asset('images/logo_unfv.png') }}" 
-             alt="Logo UNFV" 
-             class="img-fluid me-2" 
-             style="max-height: 50px; width: auto;">
-        <h1 class="fs-5 fw-bold mb-0 text-primary">Sistema de Notas</h1>
+@php
+    $role = Auth::user()->role ?? null;
+
+    $isActive = fn(array|string $patterns) => collect(\Illuminate\Support\Arr::wrap($patterns))
+        ->some(fn($pattern) => request()->routeIs($pattern));
+
+    $menus = [
+        'admin' => [
+            ['label' => 'Dashboard', 'route' => route('admin.dashboard'), 'icon' => 'fa-chart-line', 'active' => $isActive(['admin.dashboard'])],
+            ['label' => 'Escuelas', 'route' => route('admin.schools.index'), 'icon' => 'fa-building-columns', 'active' => $isActive(['admin.schools.*'])],
+            ['label' => 'Cursos', 'route' => route('admin.courses.index'), 'icon' => 'fa-book-open', 'active' => $isActive(['admin.courses.*'])],
+            ['label' => 'Docentes', 'route' => route('admin.teachers.index'), 'icon' => 'fa-chalkboard-teacher', 'active' => $isActive(['admin.teachers.*'])],
+            ['label' => 'Estudiantes', 'route' => route('admin.students.index'), 'icon' => 'fa-user-graduate', 'active' => $isActive(['admin.students.*'])],
+        ],
+        'teacher' => [
+            ['label' => 'Panel Docente', 'route' => route('teacher.dashboard'), 'icon' => 'fa-chalkboard', 'active' => $isActive(['teacher.dashboard'])],
+            ['label' => 'Mis Cursos', 'route' => route('teacher.my-courses'), 'icon' => 'fa-list-check', 'active' => $isActive(['teacher.my-courses', 'teacher.courses.grades', 'teacher.courses.grades.update', 'teacher.courses.summary'])],
+        ],
+        'student' => [
+            ['label' => 'Panel Estudiante', 'route' => route('student.dashboard'), 'icon' => 'fa-user', 'active' => $isActive(['student.dashboard'])],
+            ['label' => 'Mis Cursos', 'route' => route('student.my-courses'), 'icon' => 'fa-book', 'active' => $isActive(['student.my-courses'])],
+            ['label' => 'Mis Notas', 'route' => route('student.my-grades'), 'icon' => 'fa-award', 'active' => $isActive(['student.my-grades'])],
+        ],
+    ];
+
+    $items = $menus[$role] ?? [];
+@endphp
+
+<aside class="sidebar d-flex flex-column flex-shrink-0 p-3 min-vh-100">
+    <a href="{{ route('dashboard') }}"
+       class="d-flex align-items-center mb-4 text-white text-decoration-none sidebar-brand">
+        <i class="fa-solid fa-graduation-cap me-2"></i>
+        <span>UNFV · Sistema de Notas</span>
+    </a>
+
+    <hr class="border-light opacity-25">
+
+    <ul class="nav nav-pills flex-column gap-1 mb-auto">
+        @forelse($items as $item)
+            <li class="nav-item">
+                <a href="{{ $item['route'] }}"
+                   class="nav-link {{ $item['active'] ? 'active' : '' }}">
+                    <i class="fa-solid {{ $item['icon'] }} me-2"></i>
+                    {{ $item['label'] }}
+                </a>
+            </li>
+        @empty
+            <li class="nav-item">
+                <span class="nav-link disabled text-white-50">
+                    <i class="fa-solid fa-circle-info me-2"></i>
+                    Rol sin menú asignado
+                </span>
+            </li>
+        @endforelse
+    </ul>
+
+    <hr class="border-light opacity-25">
+
+    <div class="text-white-50 small">
+        <p class="mb-1 fw-semibold text-white">{{ Auth::user()->name ?? 'Usuario' }}</p>
+        <p class="mb-3 text-uppercase">{{ ucfirst($role ?? 'Invitado') }}</p>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Cerrar sesión
+            </button>
+        </form>
     </div>
-
-    <!-- MENÚ PRINCIPAL -->
-    <div class="flex-fill overflow-auto py-4">
-        <nav class="px-2">
-            {{-- ======================================
-                 ADMINISTRADOR
-            ======================================= --}}
-            @if(Auth::user()->role === 'admin')
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('admin.dashboard') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('admin.dashboard') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-home me-3"></i>
-                    Dashboard
-                </a>
-
-                <a href="{{ route('admin.schools.index') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('admin.schools.*') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('admin.schools.*') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-university me-3"></i>
-                    Escuelas
-                </a>
-
-                <a href="{{ route('admin.courses.index') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('admin.courses.*') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('admin.courses.*') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-book me-3"></i>
-                    Cursos
-                </a>
-
-                <a href="{{ route('admin.teachers.index') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('admin.teachers.*') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('admin.teachers.*') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-chalkboard-teacher me-3"></i>
-                    Docentes
-                </a>
-
-                <a href="{{ route('admin.students.index') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('admin.students.*') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('admin.students.*') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-user-graduate me-3"></i>
-                    Estudiantes
-                </a>
-            @endif
-
-
-            {{-- ======================================
-                 DOCENTE
-            ======================================= --}}
-            @if(Auth::user()->role === 'teacher')
-                <a href="{{ route('teacher.dashboard') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('teacher.dashboard') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('teacher.dashboard') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-home me-3"></i>
-                    Dashboard
-                </a>
-
-                <a href="{{ route('teacher.my-courses') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('teacher.my-courses') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('teacher.my-courses') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-book-open me-3"></i>
-                    Mis Cursos
-                </a>
-            @endif
-
-
-            {{-- ======================================
-                 ESTUDIANTE
-            ======================================= --}}
-            @if(Auth::user()->role === 'student')
-                <a href="{{ route('student.dashboard') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('student.dashboard') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('student.dashboard') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-home me-3"></i>
-                    Dashboard
-                </a>
-
-                <a href="{{ route('student.my-courses') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('student.my-courses') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('student.my-courses') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-book-reader me-3"></i>
-                    Mis Cursos
-                </a>
-
-                <a href="{{ route('student.my-grades') }}" 
-                   class="nav-link d-flex align-items-center px-3 py-2 mb-1 rounded {{ request()->routeIs('student.my-grades') ? 'bg-primary text-white' : 'text-light' }}"
-                   style="{{ request()->routeIs('student.my-grades') ? 'border-left: 3px solid var(--bs-primary);' : '' }}">
-                    <i class="fas fa-star me-3"></i>
-                    Mis Notas
-                </a>
-            @endif
-        </nav>
-    </div>
-
-    <!-- PIE DE PERFIL -->
-    <div class="p-4 border-top" style="background-color: var(--bs-secondary);">
-        <div class="d-flex align-items-center">
-            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center flex-shrink-0" 
-                 style="width: 40px; height: 40px;">
-                <i class="fas fa-user text-white"></i>
-            </div>
-            <div class="ms-3">
-                <p class="small fw-semibold text-white mb-0">{{ Auth::user()->name ?? 'Usuario' }}</p>
-                <p class="small text-light mb-0 opacity-75">{{ ucfirst(Auth::user()->role ?? 'invitado') }}</p>
-            </div>
-        </div>
-    </div>
-</div>
+</aside>

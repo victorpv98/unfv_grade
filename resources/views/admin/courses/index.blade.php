@@ -1,128 +1,84 @@
 @extends('layouts.app')
 
-@section('header')
-    Cursos
-@endsection
+@section('header', 'Gestión de Cursos')
 
 @section('content')
-    <!-- Header con botón de acción -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fs-1 fw-semibold text-primary">Gestión de Cursos</h2>
-        <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i> Nuevo Curso
-        </a>
-    </div>
+    <div class="container-fluid px-0">
+        @include('layouts.partials.alert')
 
-    <!-- Alertas de estado -->
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-            <div class="d-flex">
-                <div class="flex-shrink-0">
-                    <svg width="20" height="20" class="text-success" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title fw-semibold mb-0 text-secondary">
+                        <i class="fa-solid fa-book-open me-2 text-primary"></i>
+                        Cursos ofertados
+                    </h5>
+                    <p class="text-muted small mb-0">Listado de cursos disponibles en las escuelas de la facultad.</p>
                 </div>
-                <div class="ms-3 flex-grow-1">
-                    <span>{{ session('success') }}</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">
+                    <i class="fa-solid fa-plus me-2"></i>
+                    Nuevo curso
+                </a>
             </div>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-            <div class="d-flex">
-                <div class="flex-shrink-0">
-                    <svg width="20" height="20" class="text-danger" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="ms-3 flex-grow-1">
-                    <span>{{ session('error') }}</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
-    @endif
-
-    <!-- Tabla de cursos -->
-    <div class="card shadow border-0 rounded-3">
-        <div class="card-header bg-light border-bottom-0">
-            <h5 class="card-title mb-0 text-secondary">
-                <i class="fas fa-book me-2"></i>Listado de Cursos
-            </h5>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="bg-primary bg-opacity-10">
-                        <tr>
-                            <th scope="col" class="fw-semibold text-primary small py-3">ID</th>
-                            <th scope="col" class="fw-semibold text-primary small py-3">Nombre</th>
-                            <th scope="col" class="fw-semibold text-primary small py-3">Código</th>
-                            <th scope="col" class="fw-semibold text-primary small py-3">Escuela</th>
-                            <th scope="col" class="fw-semibold text-primary small py-3">Créditos</th>
-                            <th scope="col" class="fw-semibold text-primary small py-3">Ciclo</th>
-                            <th scope="col" class="fw-semibold text-primary small py-3 text-end">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($courses as $course)
-                            <tr class="border-bottom">
-                                <td class="py-3">
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">{{ $loop->iteration }}</span>
-                                </td>
-                                <td class="fw-medium py-3">{{ $course->name }}</td>
-                                <td class="text-muted py-3">
-                                    <code class="bg-light px-2 py-1 rounded">{{ $course->code }}</code>
-                                </td>
-                                <td class="text-muted py-3">{{ $course->faculty->name }}</td>
-                                <td class="py-3">
-                                    <span class="badge bg-info">{{ $course->credits }} créditos</span>
-                                </td>
-                                <td class="py-3">
-                                    <span class="badge bg-warning text-dark">Ciclo {{ $course->cycle }}</span>
-                                </td>
-                                <td class="text-end py-3">
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.courses.edit', $course) }}" 
-                                           class="btn btn-sm btn-outline-primary" 
-                                           title="Editar curso">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.courses.destroy', $course) }}" 
-                                              method="POST" 
-                                              class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="btn btn-sm btn-outline-danger" 
-                                                    title="Eliminar curso"
-                                                    onclick="return confirm('¿Estás seguro de eliminar este curso?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted text-uppercase small">
                             <tr>
-                                <td colspan="7" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="fas fa-book fa-3x mb-3 text-muted opacity-50"></i>
-                                        <h5 class="text-muted">No hay cursos registrados</h5>
-                                        <p class="mb-0">Comienza agregando tu primer curso</p>
-                                    </div>
-                                </td>
+                                <th scope="col" style="width: 10%;">Código</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col" style="width: 12%;">Créditos</th>
+                                <th scope="col">Escuela</th>
+                                <th scope="col" class="text-center" style="width: 18%;">Acciones</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse($courses as $course)
+                                <tr>
+                                    <td class="fw-semibold text-secondary">{{ $course->code }}</td>
+                                    <td>{{ $course->name }}</td>
+                                    <td>{{ $course->credits }}</td>
+                                    <td>{{ $course->school?->name ?? 'Sin asignar' }}</td>
+                                    <td class="text-center">
+                                        <div class="d-inline-flex gap-2">
+                                            <a href="{{ route('admin.courses.students', $course) }}"
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Ver estudiantes">
+                                                <i class="fa-solid fa-user-graduate"></i>
+                                            </a>
+                                            <a href="{{ route('admin.courses.edit', $course) }}"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               title="Editar curso">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a>
+                                            <form action="{{ route('admin.courses.destroy', $course) }}"
+                                                  method="POST"
+                                                  onsubmit="return confirm('¿Deseas eliminar este curso?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        title="Eliminar curso">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        <i class="fa-solid fa-circle-info me-2"></i>
+                                        No se encontraron cursos registrados.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            
-            @if(isset($courses) && $courses->hasPages())
-                <div class="card-footer bg-light border-top">
+            @if($courses instanceof \Illuminate\Contracts\Pagination\Paginator)
+                <div class="card-footer bg-white border-0 py-3">
                     {{ $courses->links() }}
                 </div>
             @endif
