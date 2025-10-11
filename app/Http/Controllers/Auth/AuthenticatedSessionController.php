@@ -3,64 +3,57 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Muestra la vista de login.
      */
-    public function create(): View
+    public function create()
     {
         return view('auth.login');
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Procesa el inicio de sesión.
      */
-    public function store(LoginRequest $request)
+    public function store(Request $request)
     {
-        // Permitir login con email o documento
-        $loginField = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL)
-            ? 'email'
-            : 'document_number';
-
-        $credentials = [
-            $loginField => $request->input('email'),
-            'password'  => $request->input('password'),
-        ];
+        $credentials = $request->validate([
+            'email'    => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors([
-                'email' => __('Credenciales incorrectas.'),
+                'email' => 'Las credenciales no son válidas.',
             ])->onlyInput('email');
         }
 
-       $request->session()->regenerate();
+        $request->session()->regenerate();
 
-        $user = $request->user();
-        if ($user->role === 'admin')   { return redirect()->route('admin.dashboard'); }
-        if ($user->role === 'teacher') { return redirect()->route('teacher.dashboard'); }
-        if ($user->role === 'student') { return redirect()->route('student.dashboard'); }
+        $user = Auth::user();
 
-        return redirect()->route('dashboard');
+        return match ($user->role) {
+            'admin'   => redirect()->route('admin.dashboard')->with('success', 'Bienvenido al panel de administrador'),
+            'teacher' => redirect()->route('teacher.dashboard')->with('success', 'Bienvenido al panel de docente'),
+            'student' => redirect()->route('student.dashboard')->with('success', 'Bienvenido al panel de estudiante'),
+            default   => redirect()->route('dashboard'),
+        };
     }
 
     /**
-     * Destroy an authenticated session.
+     * Cierra la sesión.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login')->with('info', 'Sesión cerrada correctamente.');
     }
 }

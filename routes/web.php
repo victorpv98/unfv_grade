@@ -1,39 +1,116 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\{
+    DashboardController,
+    Admin\SchoolController,
+    Admin\CourseController,
+    Admin\TeacherController,
+    Admin\StudentController,
+    Teacher\CourseGradeController,
+    Student\GradeViewController,
+};
 
-Route::redirect('/', '/login')->name('home');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth','verified'])->name('dashboard');
-
-Route::middleware(['auth','role:admin'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::get('/', fn () => view('dashboards.admin'))->name('dashboard');
-    });
-
-Route::middleware(['auth','role:teacher'])
-    ->prefix('teacher')
-    ->name('teacher.')
-    ->group(function () {
-        Route::get('/', fn () => view('dashboards.teacher'))->name('dashboard');
-    });
-
-Route::middleware(['auth','role:student'])
-    ->prefix('student')
-    ->name('student.')
-    ->group(function () {
-        Route::get('/', fn () => view('dashboards.student'))->name('dashboard');
-    });
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+/*
+|--------------------------------------------------------------------------
+| RUTAS PÚBLICAS
+|--------------------------------------------------------------------------
+*/
+Route::get('/', fn() => Auth::check()
+    ? redirect()->route('dashboard')
+    : redirect()->route('login')
+)->name('home');
 
 require __DIR__.'/auth.php';
+
+/*
+|--------------------------------------------------------------------------
+| RUTAS PROTEGIDAS (solo usuarios autenticados)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+
+    // Redirección general al dashboard según rol
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMINISTRADOR
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('checkrole:admin')
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+
+            Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])
+                ->name('dashboard');
+
+            // Gestión de escuelas
+            Route::resource('schools', SchoolController::class)->names('schools');
+
+            // Gestión de cursos
+            Route::resource('courses', CourseController::class)->names('courses');
+            // Ver estudiantes matriculados en un curso
+            Route::get('/courses/{course}/students', [CourseController::class, 'students'])
+                ->name('courses.students');
+
+            // Gestión de docentes
+            Route::resource('teachers', TeacherController::class)->names('teachers');
+
+            // Gestión de estudiantes
+            Route::resource('students', StudentController::class)->names('students');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOCENTE
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('checkrole:teacher')
+        ->prefix('teacher')
+        ->name('teacher.')
+        ->group(function () {
+
+            Route::get('/dashboard', [DashboardController::class, 'teacherDashboard'])
+                ->name('dashboard');
+
+            // Cursos asignados al docente
+            Route::get('/my-courses', [CourseGradeController::class, 'index'])
+                ->name('my-courses');
+
+            // Registro de notas (grade_details)
+            Route::get('/courses/{course}/grades', [CourseGradeController::class, 'edit'])
+                ->name('courses.grades');
+            Route::post('/courses/{course}/grades', [CourseGradeController::class, 'update'])
+                ->name('courses.grades.update');
+
+            // Promedio final (final_grades)
+            Route::get('/courses/{course}/summary', [CourseGradeController::class, 'summary'])
+                ->name('courses.summary');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | ESTUDIANTE
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('checkrole:student')
+        ->prefix('student')
+        ->name('student.')
+        ->group(function () {
+
+            Route::get('/dashboard', [DashboardController::class, 'studentDashboard'])
+                ->name('dashboard');
+
+            // Cursos matriculados (course_students)
+            Route::get('/my-courses', [GradeViewController::class, 'myCourses'])
+                ->name('my-courses');
+
+            // Consulta de notas finales (final_grades)
+            Route::get('/my-grades', [GradeViewController::class, 'myGrades'])
+                ->name('my-grades');
+        });
+});
