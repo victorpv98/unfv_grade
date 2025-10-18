@@ -66,7 +66,7 @@ a {
 
   &:hover,
   &:focus {
-    background-color: rgba(vars.$primary-rgb..., 0.08);
+    background-color: color.change(vars.$primary, $alpha: 0.08);
     color: vars.$primary;
   }
 }
@@ -74,10 +74,10 @@ a {
 // ---------------------------------------------------------------------------
 // Tarjetas
 .card {
-  box-shadow: 0 10px 25px rgba(vars.$secondary-rgb..., 0.08);
+  box-shadow: 0 10px 25px color.change(vars.$secondary, $alpha: 0.08);
 
   &-header {
-    background-color: rgba(vars.$primary-rgb..., 0.05);
+    background-color: color.change(vars.$primary, $alpha: 0.05);
   }
 }
 
@@ -87,28 +87,28 @@ a {
   border-bottom: 0;
   letter-spacing: 0.08em;
   font-size: 0.72rem;
-  color: rgba(vars.$secondary-rgb..., 0.75);
+  color: color.change(vars.$secondary, $alpha: 0.75);
 }
 
 // ---------------------------------------------------------------------------
 // Insignias (badges)
 .badge.bg-primary-subtle {
-  background-color: rgba(vars.$primary-rgb..., 0.12) !important;
+  background-color: color.change(vars.$primary, $alpha: 0.12) !important;
   color: vars.$primary !important;
 }
 
 .badge.bg-success-subtle {
-  background-color: rgba(vars.$success-rgb..., 0.12) !important;
+  background-color: color.change(vars.$success, $alpha: 0.12) !important;
   color: vars.$success !important;
 }
 
 .badge.bg-danger-subtle {
-  background-color: rgba(vars.$danger-rgb..., 0.12) !important;
+  background-color: color.change(vars.$danger, $alpha: 0.12) !important;
   color: vars.$danger !important;
 }
 
 .badge.bg-warning-subtle {
-  background-color: rgba(vars.$warning-rgb..., 0.18) !important;
+  background-color: color.change(vars.$warning, $alpha: 0.18) !important;
   color: #c47f00 !important;
 }
 
@@ -118,7 +118,7 @@ a {
   background-color: vars.$secondary;
   min-width: 240px;
   color: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 20px 40px rgba(vars.$secondary-rgb..., 0.25);
+  box-shadow: 0 20px 40px color.change(vars.$secondary, $alpha: 0.25);
 
   .sidebar-brand {
     font-weight: 700;
@@ -152,12 +152,12 @@ a {
 // ---------------------------------------------------------------------------
 // Menús desplegables y alertas
 .dropdown-menu {
-  box-shadow: 0 14px 30px rgba(vars.$secondary-rgb..., 0.12);
+  box-shadow: 0 14px 30px color.change(vars.$secondary, $alpha: 0.12);
 }
 
 .alert {
   border: 0;
-  box-shadow: 0 10px 25px rgba(vars.$secondary-rgb..., 0.08);
+  box-shadow: 0 10px 25px color.change(vars.$secondary, $alpha: 0.08);
 }
 
 // ---------------------------------------------------------------------------
@@ -170,4 +170,73 @@ a {
 .form-control,
 .form-select {
   padding: 0.65rem 0.9rem;
+}
+
+// ---------------------------------------------------------------------------
+// Paginación compacta y tablas densas
+.pagination {
+  font-size: 0.85rem;
+
+  .page-link {
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.3rem;
+  }
+
+  .page-item.active .page-link {
+    background-color: vars.$primary;
+    border-color: vars.$primary;
+  }
+
+  .page-item:not(.active) .page-link {
+    color: color.scale(vars.$secondary, $lightness: 10%);
+
+    &:hover,
+    &:focus {
+      color: vars.$primary;
+    }
+  }
+}
+
+.table-sm {
+  th,
+  td {
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Choices.js (pre-requisitos)
+.choices {
+  .choices__inner {
+    border-radius: 0.5rem;
+    border-color: rgba(0, 0, 0, 0.15);
+    padding: 0.4rem 0.6rem;
+    min-height: 3rem;
+    font-size: 0.9rem;
+  }
+
+  .choices__list--multiple .choices__item {
+    background-color: color.change(vars.$primary, $alpha: 0.15);
+    color: vars.$primary;
+    border: none;
+    border-radius: 0.5rem;
+    padding-right: 1.6rem;
+  }
+
+  .choices__list--multiple .choices__item.is-highlighted {
+    background-color: color.change(vars.$primary, $alpha: 0.25);
+  }
+
+  .choices__list--dropdown {
+    border-radius: 0.5rem;
+  }
+
+  .choices__item--selectable {
+    color: vars.$secondary;
+
+    &:hover,
+    &:focus {
+      color: vars.$primary;
+    }
+  }
 }

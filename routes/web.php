@@ -56,6 +56,10 @@ Route::middleware(['auth'])->group(function () {
             // Ver estudiantes matriculados en un curso
             Route::get('/courses/{course}/students', [CourseController::class, 'students'])
                 ->name('courses.students');
+            Route::post('/courses/{course}/students', [CourseController::class, 'enrollStudent'])
+                ->name('courses.students.enroll');
+            Route::post('/courses/{course}/prerequisites/check', [CourseController::class, 'checkPrerequisites'])
+                ->name('courses.prerequisites.check');
 
             // Gestión de docentes
             Route::resource('teachers', TeacherController::class)->names('teachers');

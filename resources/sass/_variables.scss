@@ -3,28 +3,13 @@
 // ---------------------------------------------------------------------------
 
 $primary: #ff6600 !default;
-$primary-rgb: red($primary), green($primary), blue($primary) !default;
-
 $secondary: #2c3e50 !default;
-$secondary-rgb: red($secondary), green($secondary), blue($secondary) !default;
-
 $success: #28a745 !default;
-$success-rgb: red($success), green($success), blue($success) !default;
-
 $info: #17a2b8 !default;
-$info-rgb: red($info), green($info), blue($info) !default;
-
 $warning: #ffc107 !default;
-$warning-rgb: red($warning), green($warning), blue($warning) !default;
-
 $danger: #dc3545 !default;
-$danger-rgb: red($danger), green($danger), blue($danger) !default;
-
 $light: #f8f9fa !default;
-$light-rgb: red($light), green($light), blue($light) !default;
-
 $dark: #1a1a1a !default;
-$dark-rgb: red($dark), green($dark), blue($dark) !default;
 
 $font-family-sans-serif: 'Figtree', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !default;
 $font-size-base: .95rem !default;
@@ -41,15 +26,10 @@ $btn-border-radius-lg: .65rem !default;
 
 $card-border-radius: .85rem !default;
 $card-border-width: 0 !default;
-$card-cap-bg: rgba($primary-rgb..., 0.06) !default; // 👈 cambio clave: usa spread "..." para pasar RGB
 $input-border-radius: .5rem !default;
-$input-focus-border-color: rgba($primary-rgb..., 0.6) !default;
-$input-focus-box-shadow: 0 0 0 .25rem rgba($primary-rgb..., 0.18) !default;
 
 $alert-border-radius: .75rem !default;
 $badge-border-radius: .67rem !default;
 
 $table-cell-padding-y: .85rem !default;
 $table-cell-padding-x: 1rem !default;
-$table-striped-bg: rgba($secondary-rgb..., 0.04) !default;
-$table-hover-bg: rgba($primary-rgb..., 0.08) !default;

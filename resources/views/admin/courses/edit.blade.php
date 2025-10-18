@@ -4,8 +4,6 @@
 
 @section('content')
     <div class="container-fluid px-0">
-        @include('layouts.partials.alert')
-
         <div class="row justify-content-center">
             <div class="col-xl-8">
                 <div class="card border-0 shadow-sm">
@@ -86,6 +84,50 @@
                                     @error('school_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="teacher_id" class="form-label fw-semibold text-secondary">
+                                        Docente responsable <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="teacher_id"
+                                            id="teacher_id"
+                                            class="form-select @error('teacher_id') is-invalid @enderror"
+                                            required>
+                                        <option value="" disabled>Seleccione un docente</option>
+                                        @foreach($teachers as $teacher)
+                                            <option value="{{ $teacher->id }}"
+                                                @selected(old('teacher_id', $currentTeacherId) == $teacher->id)>
+                                                {{ $teacher->user?->name ?? 'Docente sin usuario' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('teacher_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3 mb-lg-0">
+                                        @php
+                                            $currentPrerequisites = (array) old('prerequisites', $selectedPrerequisites ?? []);
+                                        @endphp
+                                        <label for="prerequisites" class="form-label fw-semibold">
+                                            Pre-requisitos
+                                        </label>
+                                        <select name="prerequisites[]"
+                                                id="prerequisites"
+                                                class="form-select choices-multiple"
+                                                multiple>
+                                            @foreach ($allCourses as $availableCourse)
+                                                <option value="{{ $availableCourse->id }}"
+                                                    @selected(in_array($availableCourse->id, $currentPrerequisites))>
+                                                    {{ $availableCourse->code }} — {{ $availableCourse->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('prerequisites')
+                                            <div class="text-danger small mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-4">

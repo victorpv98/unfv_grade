@@ -9,6 +9,8 @@ class CoursePrerequisite extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = ['course_id', 'prerequisite_id'];
 
     public function course()
