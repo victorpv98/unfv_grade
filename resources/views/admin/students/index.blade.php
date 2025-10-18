@@ -39,7 +39,7 @@
                                     <td class="fw-semibold text-secondary">{{ $student->code }}</td>
                                     <td>{{ $student->user?->name ?? 'Sin usuario' }}</td>
                                     <td>{{ $student->user?->email ?? '—' }}</td>
-                                    <td>{{ $student->admission_year }}</td>
+                                    <td>{{ $student->enrollment_year }}</td>
                                     <td>{{ $student->user?->school?->name ?? 'Sin asignar' }}</td>
                                     <td class="text-center">
                                         <div class="d-inline-flex gap-2">

@@ -21,7 +21,9 @@
             {{-- @include('admin.partials.dashboard-insights') --}}
         </div>
     @elseif(Auth::user()->role === 'teacher')
-        @include('teachers.dashboard-stats')
+        <div class="container-fluid px-4">
+            @include('teachers.partials.dashboard-stats')
+        </div>
     @elseif(Auth::user()->role === 'student')
         @include('students.dashboard-stats')
     @endif

@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
             Student::create([
                 'user_id' => $u->id,
                 'code' => '2025' . $i,
-                'admission_year' => 2025
+                'enrollment_year' => 2025
             ]);
         }
 

@@ -9,8 +9,5 @@
 
         {{-- Tarjetas principales con los totales del sistema --}}
         @include('admin.partials.dashboard-metrics')
-
-        {{-- Bloque informativo complementario --}}
-        {{-- @include('admin.partials.dashboard-insights') --}}
     </div>
 @endsection

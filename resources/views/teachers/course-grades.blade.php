@@ -67,7 +67,7 @@
                                                 {{ $student->user?->name ?? 'Sin nombre' }}
                                             </div>
                                             <small class="text-muted">
-                                                Código: {{ $student->code }} · Año {{ $student->admission_year ?? '—' }}
+                                                Código: {{ $student->code }} · Año {{ $student->enrollment_year ?? '—' }}
                                             </small>
                                         </td>
                                         @foreach (['practice1','practice2','practice3','practice4','midterm','final','substitute','makeup'] as $field)

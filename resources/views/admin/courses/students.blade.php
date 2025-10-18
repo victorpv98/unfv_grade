@@ -92,7 +92,7 @@
                                 <tr>
                                     <td class="fw-semibold text-secondary">{{ $student->code }}</td>
                                     <td>{{ $student->user?->name ?? 'Sin nombre asignado' }}</td>
-                                    <td>{{ $student->admission_year ?? '—' }}</td>
+                                    <td>{{ $student->enrollment_year ?? '—' }}</td>
                                     <td>
                                         @if(!is_null($finalGrade))
                                             <span class="badge bg-primary-subtle text-primary">
