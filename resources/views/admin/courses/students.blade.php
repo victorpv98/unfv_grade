@@ -77,17 +77,6 @@
                                     $student = $enrollment->student;
                                     $finalGrade = $enrollment->finalGrade?->average;
                                     $status = $enrollment->finalGrade?->status;
-                                    $statusKey = strtolower($status ?? '');
-                                    $statusLabel = match ($statusKey) {
-                                        'approved', 'aprobado' => 'Aprobado',
-                                        'failed', 'desaprobado' => 'Desaprobado',
-                                        default => $status ?? 'Sin registrar',
-                                    };
-                                    $statusClass = match ($statusKey) {
-                                        'approved', 'aprobado' => 'bg-success-subtle text-success',
-                                        'failed', 'desaprobado' => 'bg-danger-subtle text-danger',
-                                        default => 'bg-secondary-subtle text-secondary',
-                                    };
                                 @endphp
                                 <tr>
                                     <td class="fw-semibold text-secondary">{{ $student->code }}</td>
@@ -104,9 +93,7 @@
                                     </td>
                                     <td>
                                         @if($status)
-                                            <span class="badge {{ $statusClass }}">
-                                                {{ $statusLabel }}
-                                            </span>
+                                            <x-final-grade.status-badge :status="$status" />
                                         @else
                                             <span class="text-muted">Sin registrar</span>
                                         @endif

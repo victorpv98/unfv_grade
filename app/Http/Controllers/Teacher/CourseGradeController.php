@@ -27,49 +27,85 @@ class CourseGradeController extends Controller
 
     public function update(Request $request, Course $course)
     {
-        DB::transaction(function () use ($request) {
-            foreach ($request->grades as $studentId => $data) {
-                $courseStudent = \App\Models\CourseStudent::where('student_id', $studentId)
-                    ->where('course_id', $request->course_id)
+        DB::transaction(function () use ($request, $course) {
+            foreach ($request->input('grades', []) as $studentId => $inputGrades) {
+                $courseStudent = CourseStudent::where('student_id', $studentId)
+                    ->where('course_id', $course->id)
                     ->first();
 
-                if (!$courseStudent) continue;
+                if (!$courseStudent) {
+                    continue;
+                }
+
+                $fields = [
+                    'practice1',
+                    'practice2',
+                    'practice3',
+                    'practice4',
+                    'midterm',
+                    'final',
+                    'substitute',
+                    'makeup',
+                ];
+
+                $normalized = collect($fields)->mapWithKeys(function ($field) use ($inputGrades) {
+                    $value = $inputGrades[$field] ?? null;
+
+                    if ($value === '' || $value === null) {
+                        return [$field => null];
+                    }
+
+                    if (!is_numeric($value)) {
+                        return [$field => null];
+                    }
+
+                    return [$field => (int) round((float) $value)];
+                })->toArray();
 
                 $detail = GradeDetail::updateOrCreate(
                     ['course_student_id' => $courseStudent->id],
-                    $data
+                    $normalized
                 );
 
-                // cálculo promedio
-                $practices = collect([$detail->practice1, $detail->practice2, $detail->practice3, $detail->practice4])
-                    ->filter(fn($v) => $v !== null)
-                    ->sortDesc()
-                    ->take(3);
+                $scores = collect([
+                    $detail->practice1,
+                    $detail->practice2,
+                    $detail->practice3,
+                    $detail->practice4,
+                    $detail->midterm,
+                    $detail->final,
+                ])->filter(fn($score) => $score !== null)->values();
 
-                $promPracticas = $practices->avg() ?? 0;
-                $parcial = $detail->midterm ?? 0;
-                $final = $detail->final ?? 0;
+                $finalAverage = $scores->isNotEmpty()
+                    ? round($scores->avg(), 2)
+                    : 0;
 
-                $preliminar = round(($promPracticas * 0.4) + ($parcial * 0.3) + ($final * 0.3), 2);
-
-                // sustitutorio
-                if ($detail->substitute) {
-                    if ($parcial < $final) $parcial = max($parcial, $detail->substitute);
-                    else $final = max($final, $detail->substitute);
-                    $preliminar = round(($promPracticas * 0.4) + ($parcial * 0.3) + ($final * 0.3), 2);
+                $substitute = $detail->substitute;
+                if ($substitute !== null && $substitute > 0 && $scores->isNotEmpty()) {
+                    $lowestIndex = $scores->search($scores->min());
+                    if ($lowestIndex !== false) {
+                        $scores[$lowestIndex] = $substitute;
+                        $finalAverage = round($scores->avg(), 2);
+                    }
                 }
 
-                // aplazado
-                $promedioFinal = $preliminar;
-                if ($preliminar > 8 && $detail->makeup) {
-                    $promedioFinal = round(($preliminar + $detail->makeup) / 2, 2);
+                $makeup = $detail->makeup;
+                if ($makeup !== null && $makeup > 0) {
+                    $finalAverage = round(($finalAverage + $makeup) / 2, 2);
                 }
 
-                $status = $promedioFinal >= 10.5 ? 'Aprobado' : 'Desaprobado';
+                $status = match (true) {
+                    $makeup !== null && $makeup > 0 => $finalAverage >= 10.5 ? 'A' : 'R',
+                    $substitute !== null && $substitute > 0 => $finalAverage >= 10.5 ? 'A' : 'S',
+                    default => $finalAverage >= 10.5 ? 'A' : 'D',
+                };
 
                 FinalGrade::updateOrCreate(
                     ['course_student_id' => $courseStudent->id],
-                    ['average' => $promedioFinal, 'status' => $status]
+                    [
+                        'average' => $finalAverage,
+                        'status' => $status,
+                    ]
                 );
             }
         });

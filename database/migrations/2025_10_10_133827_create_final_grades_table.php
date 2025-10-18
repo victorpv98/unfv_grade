@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        DB::statement("ALTER TABLE final_grades ADD CONSTRAINT chk_final_status CHECK (status IN ('approved','failed'))");
+        DB::statement("ALTER TABLE final_grades ADD CONSTRAINT chk_final_status CHECK (status IN ('A','D','S','R'))");
     }
 
     public function down(): void

@@ -4,10 +4,12 @@
     $coursesCount = $coursesCount ?? 0;
     $studentsCount = $studentsCount ?? 0;
     $gradesCount = $gradesCount ?? 0;
+    $activeCoursesCount = $activeCoursesCount ?? 0;
     $lastAccess = $lastAccess ?? null;
 
-    $activeCourses = collect($activeCourses ?? []);
-    $recentActivities = collect($recentActivities ?? [])->take(5);
+    $activeCourses = $activeCourses instanceof \Illuminate\Support\Collection
+        ? $activeCourses
+        : collect($activeCourses ?? []);
 
     $lastAccessLabel = 'Sin registro';
     if ($lastAccess instanceof \DateTimeInterface) {
@@ -24,32 +26,44 @@
         [
             'label' => 'Cursos asignados',
             'value' => $coursesCount,
-            'hint'  => 'Total de cursos a tu cargo',
-            'icon'  => 'fa-book',
+            'hint' => 'Total de cursos a tu cargo',
+            'icon' => 'fa-book',
             'color' => 'primary',
         ],
         [
             'label' => 'Estudiantes',
             'value' => $studentsCount,
-            'hint'  => 'Alumnos inscritos en tus cursos',
-            'icon'  => 'fa-users',
+            'hint' => 'Total de estudiantes en tus cursos',
+            'icon' => 'fa-users',
             'color' => 'success',
         ],
         [
             'label' => 'Promedios registrados',
             'value' => $gradesCount,
-            'hint'  => 'Notas subidas al sistema',
-            'icon'  => 'fa-clipboard-check',
+            'hint' => 'Notas registradas en tus cursos',
+            'icon' => 'fa-clipboard-check',
             'color' => 'info',
-        ]
+        ],
+        [
+            'label' => 'Cursos activos',
+            'value' => $activeCoursesCount,
+            'hint' => 'Cursos activos este periodo',
+            'icon' => 'fa-chalkboard',
+            'color' => 'warning',
+        ],
     ];
 @endphp
 
 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
-    <h1 class="h4 mb-0 text-secondary d-flex align-items-center">
-        <i class="fa-solid fa-chalkboard-user text-primary me-2"></i>
-        Panel del Docente
-    </h1>
+    <div>
+        <h1 class="h4 mb-1 text-secondary d-flex align-items-center">
+            <i class="fa-solid fa-chalkboard-user text-primary me-2"></i>
+            Panel del Docente
+        </h1>
+        <span class="text-muted small">
+            Último acceso: {{ $lastAccessLabel }}
+        </span>
+    </div>
     <span class="text-muted small">
         Actualizado: {{ now()->locale('es')->translatedFormat('d M Y, H:i') }}
     </span>
@@ -60,23 +74,18 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                    <div class="flex-grow-1">
+                    <div>
                         <span class="text-uppercase text-muted fw-semibold small d-block mb-1">
                             {{ $card['label'] }}
                         </span>
-                        <h3 class="fw-bolder text-{{ $card['color'] }} mb-2">
-                            @if($card['label'] === 'Último acceso')
-                                <span class="fs-6 text-secondary">{{ $card['value'] }}</span>
-                            @else
-                                {{ number_format((int) $card['value']) }}
-                            @endif
+                        <h3 class="fw-bolder text-{{ $card['color'] }}">
+                            {{ number_format((int) $card['value']) }}
                         </h3>
                         <p class="text-muted small mb-0">
                             {{ $card['hint'] }}
                         </p>
                     </div>
-                    <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-{{ $card['color'] }} bg-opacity-10 text-{{ $card['color'] }} flex-shrink-0"
-                          style="width: 52px; height: 52px;">
+                    <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-{{ $card['color'] }} bg-opacity-10 text-{{ $card['color'] }}" style="width: 52px; height: 52px;">
                         <i class="fa-solid {{ $card['icon'] }} fa-lg"></i>
                     </span>
                 </div>
@@ -118,7 +127,7 @@
                                 $name = data_get($course, 'name', 'Curso sin nombre');
                                 $credits = data_get($course, 'credits', '—');
                                 $students = data_get($course, 'students_count', 0);
-                                $average = data_get($course, 'average', null);
+                                $average = data_get($course, 'average');
                             @endphp
                             <tr>
                                 <td class="fw-semibold text-secondary">{{ $code }}</td>

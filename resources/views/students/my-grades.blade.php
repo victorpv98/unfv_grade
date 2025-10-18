@@ -46,9 +46,7 @@
                                     </td>
                                     <td>
                                         @if($status)
-                                            <span class="badge {{ $status === 'Aprobado' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">
-                                                {{ $status }}
-                                            </span>
+                                            <x-final-grade.status-badge :status="$status" />
                                         @else
                                             <span class="text-muted">Sin registrar</span>
                                         @endif
