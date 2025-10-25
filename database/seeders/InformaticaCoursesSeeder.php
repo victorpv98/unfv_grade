@@ -9,7 +9,7 @@ class InformaticaCoursesSeeder extends Seeder
 {
     public function run(): void
     {
-        $school = School::firstOrCreate(
+        $school = School::updateOrCreate(
             ['code' => 'INFO'],
             ['name' => 'Ingeniería Informática']
         );
@@ -89,7 +89,7 @@ class InformaticaCoursesSeeder extends Seeder
         $map = [];
 
         foreach ($courses as [$code, $name, $credits, $prereqs]) {
-            $course = Course::firstOrCreate(
+            $course = Course::updateOrCreate(
                 ['code' => $code],
                 ['school_id' => $school->id, 'name' => $name, 'credits' => $credits]
             );

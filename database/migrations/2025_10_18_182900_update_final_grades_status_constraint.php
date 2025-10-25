@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            DB::statement("ALTER TABLE final_grades DROP CONSTRAINT IF EXISTS chk_final_status");
-
             DB::statement("
                 UPDATE final_grades
                 SET status = CASE
@@ -20,15 +20,20 @@ return new class extends Migration {
                 END
             ");
 
-            DB::statement("ALTER TABLE final_grades ADD CONSTRAINT chk_final_status CHECK (status IN ('A','D','S','R'))");
+            if (DB::getDriverName() !== 'sqlite') {
+                DB::statement("ALTER TABLE final_grades DROP CONSTRAINT IF EXISTS chk_final_status");
+                DB::statement("ALTER TABLE final_grades ADD CONSTRAINT chk_final_status CHECK (status IN ('A','D','S','R'))");
+            } else {
+                Schema::table('final_grades', function (Blueprint $table) {
+                    $table->enum('status', ['A', 'D', 'S', 'R'])->default('A')->change();
+                });
+            }
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            DB::statement("ALTER TABLE final_grades DROP CONSTRAINT IF EXISTS chk_final_status");
-
             DB::statement("
                 UPDATE final_grades
                 SET status = CASE
@@ -40,7 +45,14 @@ return new class extends Migration {
                 END
             ");
 
-            DB::statement("ALTER TABLE final_grades ADD CONSTRAINT chk_final_status CHECK (status IN ('approved','failed','sustitutorio','aplazado'))");
+            if (DB::getDriverName() !== 'sqlite') {
+                DB::statement("ALTER TABLE final_grades DROP CONSTRAINT IF EXISTS chk_final_status");
+                DB::statement("ALTER TABLE final_grades ADD CONSTRAINT chk_final_status CHECK (status IN ('approved','failed','sustitutorio','aplazado'))");
+            } else {
+                Schema::table('final_grades', function (Blueprint $table) {
+                    $table->string('status', 10)->change();
+                });
+            }
         });
     }
 };
