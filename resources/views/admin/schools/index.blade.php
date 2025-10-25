@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="container-fluid px-0">
-        {{-- Mensajes flash --}}
         @include('layouts.partials.alert')
 
         <div class="card border-0 shadow-sm">

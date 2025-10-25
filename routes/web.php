@@ -12,11 +12,7 @@ use App\Http\Controllers\{
     Student\GradeViewController,
 };
 
-/*
-|--------------------------------------------------------------------------
-| RUTAS PÚBLICAS
-|--------------------------------------------------------------------------
-*/
+// Rutas publicas
 Route::get('/', fn() => Auth::check()
     ? redirect()->route('dashboard')
     : redirect()->route('login')
@@ -24,22 +20,14 @@ Route::get('/', fn() => Auth::check()
 
 require __DIR__.'/auth.php';
 
-/*
-|--------------------------------------------------------------------------
-| RUTAS PROTEGIDAS (solo usuarios autenticados)
-|--------------------------------------------------------------------------
-*/
+// Rutas verificadas
 Route::middleware(['auth'])->group(function () {
 
     // Redirección general al dashboard según rol
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | ADMINISTRADOR
-    |--------------------------------------------------------------------------
-    */
+    // Admin
     Route::middleware('checkrole:admin')
         ->prefix('admin')
         ->name('admin.')
@@ -68,11 +56,7 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('students', StudentController::class)->names('students');
         });
 
-    /*
-    |--------------------------------------------------------------------------
-    | DOCENTE
-    |--------------------------------------------------------------------------
-    */
+    // Profesor
     Route::middleware('checkrole:teacher')
         ->prefix('teacher')
         ->name('teacher.')
@@ -100,11 +84,7 @@ Route::middleware(['auth'])->group(function () {
                 ->name('courses.summary');
         });
 
-    /*
-    |--------------------------------------------------------------------------
-    | ESTUDIANTE
-    |--------------------------------------------------------------------------
-    */
+    // Estudiantes
     Route::middleware('checkrole:student')
         ->prefix('student')
         ->name('student.')

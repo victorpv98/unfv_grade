@@ -150,13 +150,11 @@
         const selectedCountElement = document.getElementById('selectedCount');
         const noResultsElement = document.getElementById('noResults');
         
-        // Función para actualizar contador
         function updateSelectedCount() {
             const checkedCount = document.querySelectorAll('.student-checkbox:checked').length;
             selectedCountElement.textContent = checkedCount;
         }
         
-        // Función para mostrar/ocultar mensaje de "sin resultados"
         function toggleNoResults() {
             const visibleItems = Array.from(studentItems).filter(item => item.style.display !== 'none');
             if (visibleItems.length === 0 && searchInput.value.trim() !== '') {
@@ -166,7 +164,6 @@
             }
         }
         
-        // Buscador de estudiantes
         searchInput.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase().trim();
             
@@ -183,7 +180,6 @@
             updateSelectAllState();
         });
         
-        // Seleccionar todos
         selectAllCheckbox.addEventListener('change', function() {
             const isChecked = this.checked;
             
@@ -196,7 +192,6 @@
             updateSelectedCount();
         });
         
-        // Actualizar "seleccionar todos" cuando se cambian checkboxes individuales
         studentCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 updateSelectAllState();
@@ -216,7 +211,6 @@
             selectAllCheckbox.indeterminate = someChecked && !allChecked;
         }
         
-        // Inicializar contador
         updateSelectedCount();
     });
 </script>

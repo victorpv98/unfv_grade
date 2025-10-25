@@ -1,8 +1,3 @@
-// ============================================================================
-// 🎓 Sistema de Notas FIEI – UNFV
-// Estilos principales compilados con Vite + Bootstrap 5.3
-// ============================================================================
-
 @use "sass:color";
 @use "./variables" as vars;
 @use "bootstrap/scss/bootstrap" with (
@@ -19,8 +14,6 @@
   $body-color: vars.$body-color
 );
 
-// ---------------------------------------------------------------------------
-// Variables CSS globales (modo UNFV)
 :root {
   --unfv-primary: #{vars.$primary};
   --unfv-secondary: #{vars.$secondary};
@@ -28,8 +21,6 @@
   --unfv-dark: #{vars.$dark};
 }
 
-// ---------------------------------------------------------------------------
-// Estructura base del documento
 body {
   background-color: var(--unfv-light);
   font-family: vars.$font-family-sans-serif;
@@ -47,8 +38,6 @@ a {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Botones
 .btn-primary {
   background-color: vars.$primary;
   border-color: vars.$primary;
@@ -71,8 +60,6 @@ a {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Tarjetas
 .card {
   box-shadow: 0 10px 25px color.change(vars.$secondary, $alpha: 0.08);
 
@@ -81,8 +68,6 @@ a {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Tablas
 .table thead th {
   border-bottom: 0;
   letter-spacing: 0.08em;
@@ -90,8 +75,6 @@ a {
   color: color.change(vars.$secondary, $alpha: 0.75);
 }
 
-// ---------------------------------------------------------------------------
-// Insignias (badges)
 .badge.bg-primary-subtle {
   background-color: color.change(vars.$primary, $alpha: 0.12) !important;
   color: vars.$primary !important;
@@ -112,8 +95,6 @@ a {
   color: #c47f00 !important;
 }
 
-// ---------------------------------------------------------------------------
-// Sidebar institucional
 .sidebar {
   background-color: vars.$secondary;
   min-width: 240px;
@@ -149,8 +130,6 @@ a {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Menús desplegables y alertas
 .dropdown-menu {
   box-shadow: 0 14px 30px color.change(vars.$secondary, $alpha: 0.12);
 }
@@ -160,8 +139,6 @@ a {
   box-shadow: 0 10px 25px color.change(vars.$secondary, $alpha: 0.08);
 }
 
-// ---------------------------------------------------------------------------
-// Formularios
 .form-label {
   font-weight: 600;
   color: vars.$headings-color;
@@ -172,8 +149,6 @@ a {
   padding: 0.65rem 0.9rem;
 }
 
-// ---------------------------------------------------------------------------
-// Paginación compacta y tablas densas
 .pagination {
   font-size: 0.85rem;
 
@@ -204,8 +179,6 @@ a {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Choices.js (pre-requisitos)
 .choices {
   .choices__inner {
     border-radius: 0.5rem;

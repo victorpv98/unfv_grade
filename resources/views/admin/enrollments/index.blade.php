@@ -15,7 +15,6 @@
 <div class="card shadow border-0 rounded-3">
     <div class="card-body">
 
-        {{-- Alertas --}}
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex">
@@ -32,7 +31,6 @@
             </div>
         @endif
 
-        {{-- Filtros --}}
         <form method="GET" action="{{ route('admin.enrollments.index') }}" class="row g-3 align-items-end mb-4">
             <div class="col-md-4">
                 <label class="form-label">Curso</label>
@@ -77,7 +75,6 @@
             </div>
         </form>
 
-        {{-- Tabla de matrículas --}}
         @if($enrollments->isEmpty())
             <div class="text-center py-5">
                 <i class="fas fa-clipboard-list fa-4x text-muted opacity-50 mb-3"></i>

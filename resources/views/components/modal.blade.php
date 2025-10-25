@@ -6,7 +6,6 @@
             <div class="modal-header border-0 pb-0">
                 <div class="w-100">
                     <div class="d-flex align-items-start">
-                        <!-- Icon -->
                         @if($icon === 'warning')
                             <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle bg-danger-subtle me-3" style="width: 48px; height: 48px;">
                                 <svg width="24" height="24" class="text-danger" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -15,14 +14,12 @@
                             </div>
                         @endif
                         
-                        <!-- Title -->
                         <div class="flex-grow-1">
                             <h1 class="modal-title fs-5 fw-medium text-body-emphasis mb-0" id="{{ $id }}Label">
                                 {{ $title }}
                             </h1>
                         </div>
                         
-                        <!-- Close button -->
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                 </div>
@@ -34,7 +31,6 @@
                 </div>
             </div>
             
-            <!-- Actions -->
             <div class="modal-footer bg-body-tertiary border-0">
                 <div class="d-flex flex-column flex-sm-row-reverse gap-2 w-100">
                     {{ $actions }}

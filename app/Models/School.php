@@ -11,7 +11,6 @@ class School extends Model
 
     protected $fillable = ['code', 'name'];
 
-    // Relaciones
     public function users()
     {
         return $this->hasMany(User::class);

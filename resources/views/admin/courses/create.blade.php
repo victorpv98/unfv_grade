@@ -14,7 +14,6 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        {{-- Formulario de creación --}}
                         <form action="{{ route('admin.courses.store') }}" method="POST" novalidate>
                             @csrf
                             @php

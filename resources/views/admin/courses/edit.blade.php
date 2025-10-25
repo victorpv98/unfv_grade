@@ -14,7 +14,6 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        {{-- Formulario de edición --}}
                         <form action="{{ route('admin.courses.update', $course) }}" method="POST" novalidate>
                             @csrf
                             @method('PUT')

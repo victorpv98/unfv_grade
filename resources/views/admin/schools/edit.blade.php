@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="container-fluid px-0">
-        {{-- Mensajes flash --}}
         @include('layouts.partials.alert')
 
         <div class="row justify-content-center">
@@ -17,7 +16,6 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        {{-- Formulario de edición --}}
                         <form action="{{ route('admin.schools.update', $school) }}" method="POST" novalidate>
                             @csrf
                             @method('PUT')

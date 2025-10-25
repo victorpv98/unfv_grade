@@ -26,7 +26,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // Relaciones
     public function school()
     {
         return $this->belongsTo(School::class);

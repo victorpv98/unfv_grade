@@ -1,4 +1,3 @@
-{{-- Estadísticas generales del panel administrativo --}}
 @php
     $statCards = [
         [

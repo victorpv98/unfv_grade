@@ -1,4 +1,3 @@
-{{-- Sidebar principal: Sistema de Notas FIEI – UNFV --}}
 @php
     $role = Auth::user()->role ?? null;
     $userName = Auth::user()->name ?? 'Usuario';
@@ -217,7 +216,6 @@
        data-bs-scroll="true"
        aria-labelledby="appSidebarLabel">
 
-    {{-- Branding --}}
     <div class="offcanvas-header align-items-center px-4 py-3 border-bottom">
         <div class="d-flex align-items-center gap-3">
             <div class="border rounded-circle d-inline-flex align-items-center justify-content-center"
@@ -237,7 +235,6 @@
         </button>
     </div>
 
-    {{-- Navegación principal --}}
     <div class="offcanvas-body p-0 d-flex flex-column">
         <div class="flex-grow-1 overflow-auto px-4 py-4">
             <p class="text-uppercase small fw-semibold text-muted mb-3">Menú principal</p>
@@ -272,7 +269,6 @@
             @endforelse
         </div>
 
-        {{-- Usuario y cierre de sesión --}}
         <div class="sidebar-footer px-4 py-4">
             <div class="d-flex align-items-center gap-3 mb-3">
                 <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center"
