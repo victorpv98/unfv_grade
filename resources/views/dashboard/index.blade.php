@@ -16,15 +16,15 @@
 
     @if(Auth::user()->role === 'admin')
         <div class="container-fluid px-0">
-            {{-- Resumen administrativo reutilizable --}}
             @include('admin.partials.dashboard-metrics')
-            {{-- @include('admin.partials.dashboard-insights') --}}
         </div>
     @elseif(Auth::user()->role === 'teacher')
         <div class="container-fluid px-4">
             @include('teachers.partials.dashboard-stats')
         </div>
     @elseif(Auth::user()->role === 'student')
-        @include('students.dashboard-stats')
+        <div class="container-fluid px-4">
+            @include('students.partials.dashboard-stats')
+        </div>
     @endif
 @endsection

@@ -136,8 +136,65 @@ class DashboardController extends Controller
 
     public function studentDashboard()
     {
-        return view('dashboard.index', [
-            'title' => 'Panel del Estudiante',
+        $user = Auth::user();
+        $student = $user->student;
+
+        if (! $student) {
+            abort(403, 'El usuario autenticado no tiene un perfil de estudiante asignado.');
+        }
+
+        $studentId = $student->id;
+
+        $coursesCount = CourseStudent::query()
+            ->where('student_id', $studentId)
+            ->count();
+
+        $averageGrade = FinalGrade::query()
+            ->whereHas('courseStudent', fn ($query) => $query->where('student_id', $studentId))
+            ->avg('average');
+
+        $approvedCount = FinalGrade::query()
+            ->whereHas('courseStudent', fn ($query) => $query->where('student_id', $studentId))
+            ->where('status', 'A')
+            ->count();
+
+        $failedCount = FinalGrade::query()
+            ->whereHas('courseStudent', fn ($query) => $query->where('student_id', $studentId))
+            ->where('status', 'D')
+            ->count();
+
+        $activeCourses = CourseStudent::query()
+            ->join('courses', 'course_students.course_id', '=', 'courses.id')
+            ->join('periods', 'course_students.period_id', '=', 'periods.id')
+            ->leftJoin('final_grades', 'final_grades.course_student_id', '=', 'course_students.id')
+            ->leftJoin('course_teachers', function ($join) {
+                $join->on('course_students.course_id', '=', 'course_teachers.course_id')
+                    ->on('course_students.period_id', '=', 'course_teachers.period_id');
+            })
+            ->leftJoin('teachers', 'course_teachers.teacher_id', '=', 'teachers.id')
+            ->leftJoin('users as teacher_users', 'teachers.user_id', '=', 'teacher_users.id')
+            ->where('course_students.student_id', $studentId)
+            ->where('periods.status', 'active')
+            ->select([
+                'courses.id',
+                'courses.code',
+                'courses.name',
+                'courses.credits',
+                'teacher_users.name as teacher_name',
+                'final_grades.average',
+                'final_grades.status',
+            ])
+            ->distinct()
+            ->orderBy('courses.name')
+            ->get();
+
+        return view('students.dashboard', [
+            'coursesCount' => $coursesCount,
+            'averageGrade' => $averageGrade !== null ? round((float) $averageGrade, 2) : null,
+            'approvedCount' => $approvedCount,
+            'failedCount' => $failedCount,
+            'activeCourses' => $activeCourses,
+            'lastAccess' => $user->updated_at,
         ]);
     }
 }
