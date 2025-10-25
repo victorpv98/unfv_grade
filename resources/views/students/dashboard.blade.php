@@ -5,7 +5,14 @@
 @section('subheader', 'Resumen de tu progreso académico.')
 
 @section('content')
-    <div class="container-fluid px-4">
-        @include('students.partials.dashboard-stats')
+    <div class="card shadow border-0 mb-4" style="border-left: 4px solid var(--bs-primary) !important;">
+        <div class="card-body p-4">
+            <h2 class="fs-1 fw-semibold mb-3 text-primary">Bienvenido, {{ Auth::user()->name }}</h2>
+            <p class="text-muted">
+                {{ \Carbon\Carbon::now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY') }}
+            </p>
+        </div>
     </div>
+
+    @include('students.partials.dashboard-stats')
 @endsection

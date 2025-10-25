@@ -20,7 +20,7 @@ use Illuminate\Validation\Rule;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $activePeriod = $this->getActivePeriod();
 
@@ -45,9 +45,44 @@ class CourseController extends Controller
             },
         ]);
 
-        $courses = $coursesQuery->paginate(20);
+        $search = trim((string) $request->input('search', ''));
+        $schoolId = $request->input('school_id');
+        $teacherId = $request->input('teacher_id');
 
-        return view('admin.courses.index', compact('courses', 'activePeriod'));
+        if ($search !== '') {
+            $coursesQuery->where(function ($query) use ($search) {
+                $query->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($schoolId !== null && $schoolId !== '') {
+            $coursesQuery->where('school_id', $schoolId);
+        }
+
+        if ($teacherId !== null && $teacherId !== '') {
+            $coursesQuery->whereHas('courseTeachers', function ($query) use ($teacherId, $activePeriod) {
+                $query->where('teacher_id', $teacherId);
+
+                if ($activePeriod) {
+                    $query->where('period_id', $activePeriod->id);
+                }
+            });
+        }
+
+        $courses = $coursesQuery->paginate(20)->withQueryString();
+        $schools = School::orderBy('name')->get();
+        $teachers = $this->availableTeachers();
+
+        $filters = [
+            'search' => $search,
+            'school_id' => $schoolId,
+            'teacher_id' => $teacherId,
+        ];
+
+        $hasFilters = $search !== '' || ($schoolId !== null && $schoolId !== '') || ($teacherId !== null && $teacherId !== '');
+
+        return view('admin.courses.index', compact('courses', 'activePeriod', 'schools', 'teachers', 'filters', 'hasFilters'));
     }
 
     public function create()
@@ -322,8 +357,10 @@ class CourseController extends Controller
                 ->first();
 
             $status = $finalGrade?->status;
+            $normalizedStatus = strtolower(trim((string) $status));
+            $approvedStatuses = ['a', 'aprobado', 'approved'];
 
-            if (!$status || !in_array(strtolower($status), ['aprobado', 'approved'])) {
+            if (!$status || !in_array($normalizedStatus, $approvedStatuses, true)) {
                 $missing[] = "{$prerequisite->code} · {$prerequisite->name}";
             }
         }

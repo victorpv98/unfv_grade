@@ -28,6 +28,45 @@
             </div>
         </div>
 
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                <div>
+                    <h6 class="fw-semibold text-secondary mb-1">
+                        <i class="fa-solid fa-cloud-arrow-up text-primary me-2"></i>
+                        Carga masiva de notas
+                    </h6>
+                    <p class="text-muted small mb-0">
+                        Descarga la plantilla CSV (compatible con Excel), actualiza las notas y vuelve a subir el archivo.
+                    </p>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <a href="{{ route('teacher.courses.grades.template', $course) }}"
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="fa-solid fa-file-arrow-down me-2"></i>
+                        Descargar plantilla
+                    </a>
+                    <form action="{{ route('teacher.courses.grades.import', $course) }}"
+                          method="POST"
+                          enctype="multipart/form-data"
+                          class="d-flex align-items-center gap-2 flex-wrap">
+                        @csrf
+                        <input type="file"
+                               name="grades_file"
+                               class="form-control form-control-sm"
+                               accept=".csv,text/csv"
+                               required>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-upload me-2"></i>
+                            Importar notas
+                        </button>
+                        @error('grades_file')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title fw-semibold mb-0 text-secondary">

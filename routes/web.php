@@ -90,6 +90,10 @@ Route::middleware(['auth'])->group(function () {
                 ->name('courses.grades');
             Route::post('/courses/{course}/grades', [CourseGradeController::class, 'update'])
                 ->name('courses.grades.update');
+            Route::get('/courses/{course}/grades/template', [CourseGradeController::class, 'downloadTemplate'])
+                ->name('courses.grades.template');
+            Route::post('/courses/{course}/grades/import', [CourseGradeController::class, 'import'])
+                ->name('courses.grades.import');
 
             // Promedio final (final_grades)
             Route::get('/courses/{course}/summary', [CourseGradeController::class, 'summary'])

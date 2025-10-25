@@ -25,6 +25,63 @@
                     Nuevo curso
                 </a>
             </div>
+            <div class="card-body border-top">
+                <form method="GET"
+                      action="{{ route('admin.courses.index') }}"
+                      class="row g-2 align-items-end">
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                        <label for="filter-search" class="form-label small text-muted mb-1">Buscar</label>
+                        <input type="text"
+                               id="filter-search"
+                               name="search"
+                               value="{{ $filters['search'] ?? '' }}"
+                               class="form-control form-control-sm"
+                               placeholder="Código o nombre del curso">
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                        <label for="filter-school" class="form-label small text-muted mb-1">Escuela</label>
+                        <select id="filter-school"
+                                name="school_id"
+                                class="form-select form-select-sm">
+                            <option value="">Todas las escuelas</option>
+                            @foreach($schools as $school)
+                                <option value="{{ $school->id }}"
+                                        @selected(($filters['school_id'] ?? '') == $school->id)>
+                                    {{ $school->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                        <label for="filter-teacher" class="form-label small text-muted mb-1">Docente</label>
+                        <select id="filter-teacher"
+                                name="teacher_id"
+                                class="form-select form-select-sm">
+                            <option value="">Todos los docentes</option>
+                            @foreach($teachers as $teacher)
+                                <option value="{{ $teacher->id }}"
+                                        @selected(($filters['teacher_id'] ?? '') == $teacher->id)>
+                                    {{ $teacher->user?->name ?? 'Docente sin usuario' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-12 col-xl-3">
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-filter me-1"></i>
+                                Filtrar
+                            </button>
+                            @if($hasFilters)
+                                <a href="{{ route('admin.courses.index') }}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-solid fa-eraser me-1"></i>
+                                    Limpiar
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-sm table-striped table-hover align-middle mb-0">
