@@ -1,5 +1,6 @@
 import './bootstrap';
 import '../sass/app.scss';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;

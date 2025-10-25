@@ -11,9 +11,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
     <link rel="icon" href="{{ asset('images/logo_unfv.png') }}" type="image/png">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-uz6wcfN2/0xuxMxDPZqsloJcoa45PcRVvm739Ij5PYyz1ME3RbBtu3kMKrMN1Z8mOr+UUu5v4ps55i5wVfF7oA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <style>
