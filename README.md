@@ -1,61 +1,61 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# UNFV Grade
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicacion Laravel para la gestion de calificaciones y carga masiva de notas en la UNFV.
 
-## About Laravel
+## Arquitectura
+- Laravel 10 sobre PHP 8.2 con Apache (`Dockerfile`)
+- Base de datos PostgreSQL 15 (`docker-compose.yml:17`)
+- Vite y Node 18 para assets (`Dockerfile`)
+- Scripts de arranque y despliegue automatizados (`start.sh:1`)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requisitos previos
+- Docker Desktop 24+ y Docker Compose plugin
+- Make o equivalente opcional
+- Puertos 8000 (HTTP) y 5433 (PostgreSQL) libres
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Preparacion inicial
+1. Clonar el repositorio.
+2. Copiar variables de entorno: `cp .env.example .env`.
+3. Ajustar las variables de conexion a base de datos y correo segun entorno.
+4. Generar la clave de la aplicacion: `docker compose run --rm app php artisan key:generate`.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Desarrollo local (Docker Compose)
+1. Levantar servicios: `docker compose up -d`.
+2. Instalar dependencias PHP (si cambian): `docker compose exec app composer install`.
+3. Instalar dependencias de frontend: `docker compose exec app npm ci`.
+4. Ejecutar migraciones y seeders requeridos: `docker compose exec app php artisan migrate --seed`.
+5. Iniciar Vite en modo desarrollo si se necesita hot reload: `docker compose exec app npm run dev`.
 
-## Learning Laravel
+Los volumenes montados (`docker-compose.yml:26`) preservan `storage` y `bootstrap/cache` para mantener archivos generados y caches.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Tareas comunes
+- Ejecutar pruebas: `docker compose exec app php artisan test`.
+- Limpiar cache de Laravel: `docker compose exec app php artisan optimize:clear`.
+- Cargar seeders especificos: `docker compose exec app php artisan db:seed --class="Database\\Seeders\\InformaticaCoursesSeeder"`.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Guia de despliegue en plataformas basadas en contenedores (Railway, Render, ECS)
+La imagen se construye con Apache y ejecuta el script `start.sh:1`, que:
+- Repara permisos y crea el enlace de storage (`start.sh:8` y `start.sh:18`).
+- Espera a la base de datos PostgreSQL/MySQL antes de correr migraciones (`start.sh:24` y `start.sh:43`).
+- Ejecuta seeders si se configuran variables `RUN_SEEDERS_ON_BOOT` o `RUN_SEEDERS_CLASSES` (`start.sh:51`).
+- Configura Apache para respetar el puerto suministrado por la plataforma (`start.sh:69`).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Pasos de despliegue
+1. Construir la imagen: `docker build -t registry.example.com/unfv-grade:latest .`.
+2. Publicar la imagen en el registro de su plataforma.
+3. Crear un servicio en el proveedor (ej. Railway) usando la imagen publicada.
+4. Definir variables de entorno minimas:
+   - `APP_KEY` (usar `php artisan key:generate --show`).
+   - `APP_URL` con el dominio final.
+   - Credenciales `DB_*` que apunten a la base de datos administrada.
+   - `PORT` (la mayoria de plataformas la inyectan automaticamente).
+   - Opcional: `RUN_SEEDERS_ON_BOOT=true` o `RUN_SEEDERS_CLASSES=Database\\Seeders\\InformaticaCoursesSeeder`.
+5. Proveer almacenamiento persistente para `storage` y `bootstrap/cache` si la plataforma lo permite.
+6. Desplegar el servicio; el script ejecuta migraciones y seeders automaticamente cada vez.
 
-## Laravel Sponsors
+Si la base de datos demora en estar lista, el script reintenta cada 5 segundos hasta conectar (`start.sh:24`).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Mantenimiento
+- Regenerar assets de produccion: `docker compose exec app npm run build`.
+- Revisar el tablero de salud de contenedores para logs de Apache y Laravel (`storage/logs/laravel.log`).
+- Consultar el historial de cambios en `CHANGELOG.md`.
