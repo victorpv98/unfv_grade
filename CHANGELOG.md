@@ -2,8 +2,13 @@
 
 Este documento sigue la convención de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y se adhiere a [SemVer](https://semver.org/lang/es/) mientras el proyecto permanezca en la serie `0.x`. Se utiliza el formato `MAJOR.MINOR.PATCH`, con `PATCH` relleno a tres dígitos para facilitar la lectura cronológica commit a commit. Cada sección resume un commit aplicado a la rama principal (ordenados del más reciente al más antiguo) con el detalle de qué se añadió, cambió o retiró según el diff observado.
 
+## [1.12.001] - 2025-10-29 · Fix AppServiceProvider
+_Commit: `4657b74`_
+### Changed
+- `AppServiceProvider::boot()` fuerza `https` cuando el entorno es producción (`URL::forceScheme('https')`), evitando contenido mixto al desplegar detrás de proxies o balanceadores.
+
 ## [1.12.000] - 2025-10-25 · Add Changelog and Readme
-_Commit: ``_
+_Commit: `1651003`_
 ### Added
 - `CHANGELOG.md` inicial siguiendo la convención de Keep a Changelog con versiones `MAJOR.MINOR.PATCH` y vinculación directa a cada commit.
 ### Changed
