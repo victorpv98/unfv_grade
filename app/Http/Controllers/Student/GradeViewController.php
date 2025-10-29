@@ -21,7 +21,7 @@ class GradeViewController extends Controller
     public function myGrades()
     {
         $studentId = Auth::user()->student->id;
-        $grades = FinalGrade::with(['courseStudent.course'])
+        $grades = FinalGrade::with(['courseStudent.course', 'courseStudent.gradeDetail'])
             ->whereHas('courseStudent', fn($q) => $q->where('student_id', $studentId))
             ->get();
 

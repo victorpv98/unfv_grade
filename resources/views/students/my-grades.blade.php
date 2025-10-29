@@ -21,8 +21,9 @@
                             <tr>
                                 <th scope="col" style="width: 12%;">Código</th>
                                 <th scope="col">Curso</th>
-                                <th scope="col" style="width: 20%;">Promedio final</th>
-                                <th scope="col" style="width: 20%;">Estado</th>
+                                <th scope="col" style="width: 24%;">Detalle de notas</th>
+                                <th scope="col" style="width: 18%;">Promedio final</th>
+                                <th scope="col" style="width: 18%;">Estado</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -31,10 +32,40 @@
                                     $course = $finalGrade->courseStudent?->course;
                                     $average = $finalGrade->average;
                                     $status = $finalGrade->status;
+                                    $detail = $finalGrade->courseStudent?->gradeDetail;
+                                    $gradeLabels = [
+                                        'practice1' => 'P1',
+                                        'practice2' => 'P2',
+                                        'practice3' => 'P3',
+                                        'practice4' => 'P4',
+                                        'midterm'   => 'Parcial',
+                                        'final'     => 'Final',
+                                        'substitute'=> 'Sustitutorio',
+                                        'makeup'    => 'Aplazado',
+                                    ];
+                                    $hasDetails = false;
                                 @endphp
                                 <tr>
                                     <td class="fw-semibold text-secondary">{{ $course?->code ?? '—' }}</td>
                                     <td>{{ $course?->name ?? 'Curso no disponible' }}</td>
+                                    <td>
+                                        @if($detail)
+                                            <ul class="list-unstyled mb-0 small text-muted">
+                                                @foreach($gradeLabels as $field => $label)
+                                                    @php $value = $detail?->$field; @endphp
+                                                    @if(!is_null($value))
+                                                        @php $hasDetails = true; @endphp
+                                                        <li><span class="text-secondary fw-semibold">{{ $label }}:</span> {{ number_format($value, 2) }}</li>
+                                                    @endif
+                                                @endforeach
+                                            </ul>
+                                            @unless($hasDetails)
+                                                <span class="text-muted">Sin notas parciales registradas</span>
+                                            @endunless
+                                        @else
+                                            <span class="text-muted">Notas no disponibles</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if(!is_null($average))
                                             <span class="badge bg-primary-subtle text-primary">

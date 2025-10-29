@@ -16,10 +16,16 @@
                     Escuela: {{ $course->school?->name ?? 'Sin escuela definida' }} · Créditos: {{ $course->credits }}
                 </p>
             </div>
-            <a href="{{ route('teacher.my-courses') }}" class="btn btn-outline-secondary">
-                <i class="fa-solid fa-arrow-left me-2"></i>
-                Volver a mis cursos
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('teacher.courses.acta.show', $course) }}" class="btn btn-primary">
+                    <i class="fa-solid fa-file-signature me-2"></i>
+                    Generar acta
+                </a>
+                <a href="{{ route('teacher.my-courses') }}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left me-2"></i>
+                    Volver a mis cursos
+                </a>
+            </div>
         </div>
 
         <div class="card border-0 shadow-sm">

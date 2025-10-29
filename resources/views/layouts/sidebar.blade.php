@@ -8,13 +8,14 @@
         'admin' => [
             ['label' => 'Dashboard', 'route' => route('admin.dashboard'), 'icon' => 'fa-chart-line', 'active' => $isActive(['admin.dashboard'])],
             ['label' => 'Escuelas', 'route' => route('admin.schools.index'), 'icon' => 'fa-building-columns', 'active' => $isActive(['admin.schools.*'])],
-            ['label' => 'Cursos', 'route' => route('admin.courses.index'), 'icon' => 'fa-book-open', 'active' => $isActive(['admin.courses.*'])],
+            ['label' => 'Cursos', 'route' => route('admin.courses.index'), 'icon' => 'fa-book-open', 'active' => $isActive(['admin.courses.*']) && !request()->routeIs('admin.courses.actas.*')],
+            ['label' => 'Actas', 'route' => route('admin.courses.actas.index'), 'icon' => 'fa-file-contract', 'active' => $isActive(['admin.courses.actas.*'])],
             ['label' => 'Docentes', 'route' => route('admin.teachers.index'), 'icon' => 'fa-chalkboard-teacher', 'active' => $isActive(['admin.teachers.*'])],
             ['label' => 'Estudiantes', 'route' => route('admin.students.index'), 'icon' => 'fa-user-graduate', 'active' => $isActive(['admin.students.*'])],
         ],
         'teacher' => [
             ['label' => 'Panel Docente', 'route' => route('teacher.dashboard'), 'icon' => 'fa-chalkboard', 'active' => $isActive(['teacher.dashboard'])],
-            ['label' => 'Mis Cursos', 'route' => route('teacher.my-courses'), 'icon' => 'fa-list-check', 'active' => $isActive(['teacher.my-courses', 'teacher.courses.grades', 'teacher.courses.grades.update', 'teacher.courses.summary'])],
+            ['label' => 'Mis Cursos', 'route' => route('teacher.my-courses'), 'icon' => 'fa-list-check', 'active' => $isActive(['teacher.my-courses', 'teacher.courses.grades', 'teacher.courses.grades.update', 'teacher.courses.summary', 'teacher.courses.acta.*'])],
         ],
         'student' => [
             ['label' => 'Panel Estudiante', 'route' => route('student.dashboard'), 'icon' => 'fa-user', 'active' => $isActive(['student.dashboard'])],

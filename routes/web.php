@@ -11,6 +11,8 @@ use App\Http\Controllers\{
     Teacher\CourseGradeController,
     Student\GradeViewController,
 };
+use App\Http\Controllers\Admin\CourseActaController as AdminCourseActaController;
+use App\Http\Controllers\Teacher\CourseActaController as TeacherCourseActaController;
 
 // Rutas publicas
 Route::get('/', fn() => Auth::check()
@@ -38,6 +40,16 @@ Route::middleware(['auth'])->group(function () {
 
             // Gestión de escuelas
             Route::resource('schools', SchoolController::class)->names('schools');
+
+            // Actas de curso
+            Route::get('/courses/actas', [AdminCourseActaController::class, 'index'])
+                ->name('courses.actas.index');
+            Route::get('/courses/actas/{acta}', [AdminCourseActaController::class, 'show'])
+                ->name('courses.actas.show');
+            Route::get('/courses/actas/files/{file}/download', [AdminCourseActaController::class, 'download'])
+                ->name('courses.actas.files.download');
+            Route::get('/courses/actas/files/{file}/preview', [AdminCourseActaController::class, 'preview'])
+                ->name('courses.actas.files.preview');
 
             // Gestión de cursos
             Route::resource('courses', CourseController::class)->names('courses');
@@ -82,6 +94,16 @@ Route::middleware(['auth'])->group(function () {
             // Promedio final (final_grades)
             Route::get('/courses/{course}/summary', [CourseGradeController::class, 'summary'])
                 ->name('courses.summary');
+
+            // Actas
+            Route::get('/courses/{course}/acta', [TeacherCourseActaController::class, 'show'])
+                ->name('courses.acta.show');
+            Route::post('/courses/{course}/acta', [TeacherCourseActaController::class, 'generate'])
+                ->name('courses.acta.generate');
+            Route::post('/courses/{course}/acta/upload', [TeacherCourseActaController::class, 'uploadSigned'])
+                ->name('courses.acta.upload');
+            Route::get('/courses/{course}/acta/files/{file}', [TeacherCourseActaController::class, 'download'])
+                ->name('courses.acta.files.download');
         });
 
     // Estudiantes

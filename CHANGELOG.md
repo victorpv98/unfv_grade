@@ -2,8 +2,28 @@
 
 Este documento sigue la convención de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y se adhiere a [SemVer](https://semver.org/lang/es/) mientras el proyecto permanezca en la serie `0.x`. Se utiliza el formato `MAJOR.MINOR.PATCH`, con `PATCH` relleno a tres dígitos para facilitar la lectura cronológica commit a commit. Cada sección resume un commit aplicado a la rama principal (ordenados del más reciente al más antiguo) con el detalle de qué se añadió, cambió o retiró según el diff observado.
 
+## [1.13.000] - 2025-10-29 · Add grade reports
+_Commit: `(pendiente)`_
+### Added
+- Migraciones `2025_10_29_183051_create_course_actas_table.php`, `2025_10_29_183055_create_course_acta_files_table.php` y `2025_10_29_183059_create_notifications_table.php` para versionar actas, almacenar archivos firmados y registrar notificaciones.
+- Modelos `CourseActa` y `CourseActaFile`, más el servicio `App\Services\CourseActaService` que genera PDFs con Dompdf y maneja firmas cargadas o dibujadas.
+- Flujo docente completo (`Teacher\CourseActaController`, vista `teachers/course-acta.blade.php`) con captura de firma en canvas, historial de versiones y subida de PDF firmado.
+- Panel administrativo de actas (`Admin\CourseActaController`, vistas `admin/course-actas/*.blade.php`) con filtros, vista previa embebida, descargas y métricas por estudiante.
+- Plantilla PDF `resources/views/pdf/course-acta.blade.php` con resumen del curso, notas finales y bloque de firmas.
+### Changed
+- `composer.json` incorpora `barryvdh/laravel-dompdf` para soportar la generación de PDFs.
+- `routes/web.php` agrega rutas docentes y administrativas para generar, subir, previsualizar y descargar actas.
+- Vistas docentes (`teachers/course-grades.blade.php`, `teachers/final-summary.blade.php`) muestran accesos directos para generar actas y cargar PDFs firmados.
+- `layouts/sidebar.blade.php` incluye accesos específicos para el nuevo módulo de actas según el rol.
+- Flujo de generación docente (`Teacher\CourseActaController` y `teachers/course-acta.blade.php`) ya no solicita ni captura firmas; el PDF se genera sin rúbrica embebida.
+- Historiales de versiones de actas se eliminaron de las pantallas docente y administrativa, manteniendo solo el último PDF generado o firmado disponible para descarga.
+- Las fechas y horas visibles (PDF, panel docente y administrativo) se muestran con la zona horaria configurada en la aplicación.
+- La plantilla PDF del acta muestra únicamente el espacio para la firma del docente, sin nombre impreso ni bloque del administrador académico.
+
 ## [1.12.001] - 2025-10-29 · Fix AppServiceProvider
-_Commit: `4657b74`_
+_Commit: `4ce3513`_
+### Added
+- Middleware `app/Http/Middleware/TrustProxies.php` que confía en los encabezados `X-Forwarded-*` del balanceador para conservar el esquema y host originales.
 ### Changed
 - `AppServiceProvider::boot()` fuerza `https` cuando el entorno es producción (`URL::forceScheme('https')`), evitando contenido mixto al desplegar detrás de proxies o balanceadores.
 

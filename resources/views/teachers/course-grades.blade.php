@@ -17,6 +17,10 @@
                 </p>
             </div>
             <div class="d-inline-flex gap-2">
+                <a href="{{ route('teacher.courses.acta.show', $course) }}" class="btn btn-primary">
+                    <i class="fa-solid fa-file-signature me-2"></i>
+                    Generar acta
+                </a>
                 <a href="{{ route('teacher.courses.summary', $course) }}" class="btn btn-outline-secondary">
                     <i class="fa-solid fa-chart-line me-2"></i>
                     Resumen final

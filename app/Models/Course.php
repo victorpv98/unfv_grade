@@ -53,4 +53,15 @@ class Course extends Model
         return $this->belongsToMany(Student::class, 'course_students')
                     ->withTimestamps();
     }
+
+    public function actas()
+    {
+        return $this->hasMany(CourseActa::class);
+    }
+
+    public function currentActa()
+    {
+        return $this->hasOne(CourseActa::class)
+            ->latestOfMany();
+    }
 }
